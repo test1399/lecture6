@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+
+<html>
+<head> <title> Infinite posts </title></head>
+<script>
+start = 0
+document.addEventListener("DOMContentLoaded", loadPosts());
+
+window.onscroll = () => {
+	if (window.innerHeight + window.scrollY >= document.body.offsetHeight)
+		loadPosts()
+}
+
+function loadPosts()
+{
+	request = new XMLHttpRequest()
+	request.open("POST", '/posts')
+	
+	request.onload = ()=> {
+		const data = JSON.parse( request.responseText )
+		start+=data.length;
+		data.forEach(content => {
+			const li = document.createElement("li")
+			li.className = "post";
+			li.innerHTML = content;
+			
+			document.querySelector("ul").append(li)
+		})
+	}
+	
+	const data = new FormData();
+	data.append("start", start)
+	request.send(data)
+}
+</script>
+<body>
+
+<ul id="container"></ul>
+
+</body>
+</html>
